@@ -4,7 +4,7 @@ Risks are things that might happen. Issues are problems that have already happen
 
 ## 1. Scoring method
 
-Probability (P) and impact (I) each use a 1–5 scale: 1 = very low, 2 = low, 3 = medium, 4 = high, 5 = very high. Exposure = P × I (range 1–25). Risks are ranked by exposure, and ties are broken by the higher impact. Impact considers the adoption target, privacy of children's data, schedule and the trust of parents and teachers. The scores are planning judgments, not measured probabilities.
+Probability (P) and impact (I) each use a 1–5 scale: 1 = very low, 2 = low, 3 = medium, 4 = high, 5 = very high. Exposure = P × I (range 1–25). Risks are ranked by exposure, and ties are broken by the higher impact, then by breadth of affected users (how many parents or teachers the risk touches). R2 (delivery to all parents) ranks above R5, and R6 above R7. Impact considers the adoption target, privacy of children's data, schedule and the trust of parents and teachers. The scores are planning judgments, not measured probabilities.
 
 Bands: exposure ≥ 15 high, 9–14 medium, ≤ 8 low.
 
@@ -30,10 +30,10 @@ Each cell lists the risk IDs with that probability and impact.
 | 4 | R3 | Teachers keep running WhatsApp groups (parallel channels) | 4 | 3 | 12 | Mitigate | Principal circular that official notices go through SchoolDiary, teacher training, the after-8 p.m. report shown to management, easier posting than WhatsApp | School principals |
 | 5 | R4 | Privacy breach: a parent sees another child's data, or a phone number leaks | 2 | 5 | 10 | Avoid | Role and child scoping at the service layer, masked numbers, automated access tests (NFR-03), TLS and encryption at rest, no public URLs for attachments | Developer 1 (technical lead) |
 | 6 | R6 | Roster and contact import errors | 3 | 3 | 9 | Transfer | Schools sign off their own rosters and contact lists before import. The admin panel gives per-row CSV errors and a dry-run import. | School admins |
-| 7 | R7 | Schedule slip in Messaging (the largest work item, 12 pd) | 3 | 3 | 9 | Accept | Messaging (task E) has 6 days of float, so a slip of up to 6 days does not move the finish. Progress is checked at each milestone and the plan is re-baselined if the float is used. | Project manager |
-| 8 | R8 | Management disputes the definition of "active parent" | 2 | 3 | 6 | Avoid | Agree the definition (at least one login or notice opened in the calendar month) in writing before the pilot and build the report to it | Project manager |
+| 7 | R7 | Schedule slip in Messaging (the largest work item, 12 pd) | 3 | 3 | 9 | Accept | Messaging (task E) has 6 days of total float, but only 1 day is free, because P3 does D next (D's LF is 18). If E slips by more than 1 day, P1 takes part of D on days 16–18 in place of test preparation. Progress is checked at each milestone, and the plan is re-baselined if float is used. | Project manager |
+| 8 | R8 | Management disputes the definition of "active parent" | 2 | 3 | 6 | Avoid | Agree the definition (an active parent is a parent who opens at least one notice or message in the calendar month) in writing before the pilot and build the report to it | Project manager |
 
-Highest exposure is R1 (20), the only high-band risk. R2, R5 and R3 are tied at 12, and are ordered by impact. Scores must be revisited after the pilot.
+Highest exposure is R1 (20), the only high-band risk. R2, R5 and R3 are tied at 12; R3 (impact 3) ranks below R2 and R5 (impact 4), and R2 ranks above R5 by breadth of affected users. Scores must be revisited after the pilot.
 
 ## 3. RMMM plans for the top three
 

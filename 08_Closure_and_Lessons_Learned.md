@@ -6,7 +6,7 @@
 
 ### Project summary
 
-SchoolDiary is a parent–teacher communication app for a group of 12 schools with 14,000 parents and 650 teachers. It delivers notices, homework, attendance alerts, fee reminders and two-way messaging within school hours. The project built all 8 work items (68 person-days, 3 people) and ran a 2-week pilot at 2 schools with 2,300 parents (16.4% of all parents) and about 107 teachers.
+SchoolDiary is a parent–teacher communication app for a group of 12 schools with 14,000 parents and 650 teachers. It delivers notices, homework, attendance alerts, fee reminders and two-way messaging within school hours. The project built all 8 work items (68 person-days, 3 people) and ran the pilot at 2 schools (adoption measured over the first pilot month; post-release defects counted over the first 2 pilot weeks) with 2,300 parents (16.4% of all parents) and about 107 teachers.
 
 ### Pilot results
 
@@ -24,7 +24,7 @@ SchoolDiary is a parent–teacher communication app for a group of 12 schools wi
 | Baseline plan (critical path A → B → G → H) | 27 |
 | Actual | **29** (+2 days, +7.4%) |
 
-- Messaging took 14 days instead of 12 (R7 happened). It had 6 days of float, so it had no critical-path impact.
+- Messaging took 14 days instead of 12 (R7 happened). E had 6 days of total float, but P3 was due to start D after E, so P1 took 2 days of D on days 16–18. D still finished by day 18, and there was no critical-path impact.
 - The actual slip came from UAT defect fixes: Testing (task G, on the critical path) took 6 days instead of 4.
 
 ### Scope delivered
@@ -37,7 +37,7 @@ FR-01 to FR-10 were delivered on Android and the web admin panel, in English, fo
 
 ### Decision
 
-**Conditional rollout** to the remaining 10 schools (11,700 parents). The adoption figure (86.0% against 90%) is below target, so SMS fallback (C-02) is prioritised to lift adoption. Rollout proceeds if, after the onboarding drive, adoption at each new school is tracked against the same 90% target from week 3.
+**Conditional rollout** to the remaining 10 schools (11,700 parents). The adoption figure (86.0% against 90%) is below target, so SMS fallback (C-02) is prioritised to lift adoption. Rollout proceeds school by school if adoption reaches at least 80% by week 3 (the R1 trigger).
 
 ### Open risks
 
@@ -67,13 +67,13 @@ R7 has happened and is closed with no critical-path effect. Open risks carry int
 | QA lead | (Developer/QA) | Test evidence and DRE accepted | |
 | Principals of the 2 pilot schools | (representatives) | Pilot results accepted | |
 
-## 2. Lessons learned
+## 2. Lessons learned (Simulated for the case study)
 
 | # | What happened | Root cause | Lesson | Action for the 10-school rollout | Owner |
 |---|---|---|---|---|---|
 | 1 | Testing took 6 days instead of 4, and the project finished on day 29 instead of 27. | UAT found defects late, and fixes and retests were done inside the critical Testing task, with no buffer. | The critical path needs schedule buffer where late defects are likely. | Add a 2-day fix-and-retest buffer after UAT and start UAT earlier on finished modules. | Project manager |
 | 2 | Adoption was 86.0% against 90%. | Onboarding relied on class teachers alone, and some parents lacked smartphones or data. | An adoption target needs its own plan, not only a product. | Run the onboarding drive from week 1 and bring SMS fallback (C-02) forward, with weekly adoption tracking and the R1 trigger. | Project manager with school sponsors |
-| 3 | Messaging took 14 days instead of 12. | The time rules, queue and approval flow were more complex than estimated. | Float absorbed the slip because the estimate had noted the dependencies. | Keep float visible in the plan and add 20% to complex rule-based work in estimates. | Project manager |
-| 4 | An after-hours message was queued twice on midnight rollover (DEF-35) and reached the pilot. | BVA covered 23:59 and 00:00 as times, but not a clock crossing midnight with an existing queue entry. | Time-based rules need state tests across the boundary, not only single values. | Add clock-controlled tests across midnight, month end and holidays, and rerun TC-BVA-08 and TC-BVA-09 on every release. | QA lead |
+| 3 | Messaging took 14 days instead of 12. | The time rules, queue and approval flow were more complex than estimated. | Total float absorbed the slip only because work was reassigned; resource-levelled float is smaller. | Keep float visible in the plan and add 20% to complex rule-based work in estimates. | Project manager |
+| 4 | An after-hours message was queued twice on midnight rollover (DEF-35) and reached the pilot. | TC-BVA-08 and TC-BVA-09 were run as separate messages on a reset test clock, so a 23:59 message still queued when the clock crossed 00:00 was never exercised. | Time-based rules need state tests across the boundary, not only single values. | Add clock-controlled tests across midnight, month end and holidays, and rerun TC-BVA-08 and TC-BVA-09 on every release. | QA lead |
 | 5 | Contact numbers were missing for 186 of 2,300 parents (I-01). | Import data came from school records that no one had validated. | Data quality is a schedule item, not an assumption. | Ask each school to validate rosters before import and use the admin panel's dry-run report. | School admins |
 | 6 | Push was delayed on low-end phones with battery saver on (I-03). | Testing devices were mostly newer than the parents' phones. | Test on the devices users really have. | Keep two Android 8 phones with 2 GB RAM in the test kit, publish battery-saver help, and fund the SMS fallback. | Developer 1 (technical lead) |

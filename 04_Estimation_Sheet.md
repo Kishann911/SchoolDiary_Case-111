@@ -24,7 +24,7 @@
 | A4 | Ideal duration assumes perfect parallelism across 3 people |
 | A5 | Scheduled duration comes from the CPM in `03_Project_Plan.md`; dependencies are the stated assumptions there |
 | A6 | Durations are working days; day 0 is project start; no holidays or leave |
-| A7 | "Monthly active" means a parent who opens the app at least once in a calendar month (definition to be agreed with management) |
+| A7 | "Active parent" (monthly active) means a parent who opens at least one notice or message in the calendar month (definition to be agreed with management) |
 
 ## 3. Calculations
 

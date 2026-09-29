@@ -38,14 +38,15 @@ Out of scope for this release: online fee payment, video calls, student logins a
 | Sending window | 07:00–19:59 inclusive, when teachers may send messages |
 | Routine message | A teacher message with no urgency flag |
 | Urgent message | A teacher message flagged urgent; outside the window it needs principal approval |
-| Queued | Held by the system and auto-scheduled for 07:00 the next school day |
+| Queued | Held by the system and auto-scheduled for next school day 07:00 |
 | Read receipt | Per-parent record of delivered and read for a notice |
 | School admin | School-level administrator who approves school-level notices and manages rosters |
 | Management | Group-level staff who view reports across schools |
 | Push gateway | External service (for example FCM) that delivers push notifications to Android devices |
 | MoSCoW | Must, Should, Could, Won't priority classes |
 | FR / NFR | Functional / non-functional requirement |
-| BVA, EP, DT | Boundary value analysis, equivalence partitioning, decision table |
+| BVA, EC, DT | Boundary value analysis, equivalence classes, decision table |
+| Active parent | A parent who opens at least one notice or message in the calendar month |
 | TLS, AES | Transport Layer Security; Advanced Encryption Standard |
 | CSV | Comma-separated values file used for bulk import |
 
@@ -136,13 +137,13 @@ Priority uses MoSCoW: **M** Must, **S** Should. Every requirement has an accepta
 |---|---|---|---|
 | FR-01 | Accounts and roles: parent, teacher, school admin, management, each scoped to school / class / child | M | Create one account per role with a scope; each can open only screens and records inside its scope; an out-of-scope request returns "access denied" (TC-01) |
 | FR-02 | Notices: publish class-level or school-level notices with attachments. School-level notices need school-admin approval before publishing | M | A class notice with a PDF attachment is visible to that class's parents; a school-level notice stays "Pending" and is invisible to parents until the school admin approves it (TC-02) |
-| FR-03 | Read receipts: record delivered/read per parent for every notice. The sender sees read % and the unread list | M | For a notice to 30 parents where 12 open it, the sender sees 40% read and a list of the 18 unread parents by name (TC-03) |
+| FR-03 | Read receipts: record delivered/read per parent for every notice. The sender sees read % and the unread list | M | For a notice to 10 test parents where 6 open it, the sender sees 60% read and a list of the 4 unread parents by name (TC-03) |
 | FR-04 | Homework: post homework per class and subject with a due date. Parents view and acknowledge it | S | A homework item for Class 5 Maths with a due date appears for the class's parents; after a parent taps Acknowledge, the teacher sees that parent as acknowledged (TC-04) |
 | FR-05 | Attendance alerts: when a student is marked absent, their parent is notified within 15 min of roll call | M | Mark a student absent at 09:00 roll call; the parent's device receives the alert by 09:15 (TC-05) |
 | FR-06 | Fee reminders: reminders at 7 days and 1 day before each due date, from the school's fee records. **No payment in the app** | S | For a due date of D, reminders are generated at D−7 and D−1 only; the reminder screen has no pay button or payment link (TC-06) |
 | FR-07 | Two-way messaging: a parent ↔ class/subject teacher thread per student | M | A parent sends a message about their child to the class teacher; the teacher replies inside the window; both see one thread for that student (TC-07) |
 | FR-08 | Messaging-hours rule (see section 3.5) | M | Every case in the BVA table and decision table of section 3.5 gives the stated outcome (TC-08, TC-BVA-*, TC-DT-*) |
-| FR-09 | Admin panel: schools, classes, rosters, teacher–class mapping, bulk CSV import, approval queue | M | Import a CSV of 100 students with 3 invalid rows: 97 load, 3 appear in an error report; map a teacher to a class and approve a pending school notice from the queue (TC-09) |
+| FR-09 | Admin panel: schools, classes, rosters, teacher–class mapping, bulk CSV import, approval queue | M | Import a CSV of 100 students with 1 bad row: 99 load and the bad row appears in an error report with its line number; map a teacher to two classes and open the approval queue (TC-09) |
 | FR-10 | Communication record and management reports: a searchable audit log of all notices and messages. Monthly-active-parents report (target 90%), and a teacher after-8 p.m. messages report (target 0) | S | Search the log by date, sender and text and find a known notice; the two reports show numerator, denominator and percentage for a seeded month (TC-10) |
 
 ### 3.3 Non-functional requirements
@@ -167,13 +168,13 @@ These are outcome targets from the brief, monitored through FR-10: 90% of parent
 **Rule set.** Times are IST at hh:mm granularity.
 
 1. **Teacher sending window: 07:00–19:59 inclusive.** A teacher message inside the window is sent at once.
-2. **Routine teacher message outside the window (20:00–06:59)** is not sent. It is queued and auto-scheduled for 07:00 the next school day. The teacher sees "Queued for 07:00".
+2. **Routine teacher message outside the window (20:00–06:59)** is not sent. It is queued and auto-scheduled for next school day 07:00. The teacher sees "Queued for 07:00".
 3. **Urgent teacher message outside the window** needs principal approval. Approved: sent immediately. Rejected, or no decision by 07:00: sent at 07:00.
 4. **Parents may send at any time.** A parent message received outside the window is held and shown to the teacher at 07:00. The parent gets an instant auto-reply: "Teachers reply between 07:00 and 20:00. For emergencies call the school office."
 5. **Notice approval.** A class-level notice by the class teacher publishes immediately if inside the window; outside it, it is queued like a routine message. A school-level notice always needs school-admin approval.
 6. **Target.** Teacher messages delivered after 20:00 = 0. The only exceptions are urgent messages with principal approval, which are reported separately.
 
-**Boundary values for the message time** (test ids TC-BVA-01 to TC-BVA-09):
+**Boundary values for the message time** (teacher rows TC-BVA-01 to TC-BVA-09; parent rows TC-BVA-10 to TC-BVA-18 in `06_Test_Plan_and_Evidence.md`):
 
 | Send time | Expected outcome |
 |---|---|
@@ -182,37 +183,39 @@ These are outcome targets from the brief, monitored through FR-10: 90% of parent
 | 07:01 | Allowed; sent |
 | 19:58 | Allowed; sent |
 | 19:59 | Allowed; sent |
-| 20:00 | Queued for 07:00 next school day |
-| 20:01 | Queued for 07:00 next school day |
-| 23:59 | Queued; scheduled for the next-day 07:00 |
-| 00:00 (next calendar day) | Queued; scheduled for the same next-day 07:00 (no double queueing across midnight) |
+| 20:00 | Queued for next school day 07:00 |
+| 20:01 | Queued for next school day 07:00 |
+| 23:59 | Queued; scheduled for the next school day 07:00 |
+| 00:00 (next calendar day) | Queued; scheduled for the same next school day 07:00 (no double queueing across midnight) |
 
-**Equivalence classes** (TC-EP-*): valid inside-window (07:00–19:59), invalid before window (00:00–06:59), invalid after window (20:00–23:59); sender class (teacher, parent); message class (routine, urgent).
+**Equivalence classes** (TC-EC-01 to TC-EC-11): inside the window (07:00–19:59, sent now); before the window (00:00–06:59) and after the window (20:00–23:59), which are valid inputs whose outcome is to queue for the next school day 07:00; not a valid time (for example 25:10), which is rejected as invalid input; sender class (teacher, parent); message class (routine, urgent).
 
-**Decision table** (TC-DT-01 to TC-DT-*; Y = yes, N = no):
+**Decision table for messages** (TC-DT-R1 to TC-DT-R7; Y = yes, N = no, – = not applicable):
 
 | Condition / action | R1 | R2 | R3 | R4 | R5 | R6 | R7 |
 |---|---|---|---|---|---|---|---|
-| Sender is a teacher | Y | Y | Y | Y | Y | N (parent) | N (parent) |
+| Sender (T = teacher, P = parent) | T | T | T | T | T | P | P |
 | Time inside 07:00–19:59 | Y | N | N | N | N | Y | N |
 | Urgent flag | – | N | Y | Y | Y | – | – |
-| Principal decision | – | – | Approved | Rejected | None by 07:00 | – | – |
-| **Send now** | X | | X | | | X | |
-| **Queue for 07:00** | | X | | X | X | | |
+| Principal decision | – | – | Pending | Approved | Rejected / none by 07:00 | – | – |
+| **Send now** | X | | | X | | X | |
+| **Queue for 07:00** | | X | | | X | | |
+| **Request principal approval** | | | X | | | | |
 | **Hold for teacher at 07:00 and auto-reply** | | | | | | | X |
 
-Notice approval decision table (TC-DT-*, continued):
+**Decision table for notices** (TC-DT-R8 to TC-DT-R13):
 
-| Condition / action | N1 | N2 | N3 | N4 |
-|---|---|---|---|---|
-| Level: school (Y) or class (N) | N | N | Y | Y |
-| Time inside window | Y | N | Y | Y |
-| Admin decision | – | – | Approved | Rejected or none |
-| **Publish now** | X | | X | |
-| **Queue for 07:00** | | X | | |
-| **Not published (returned to sender)** | | | | X |
+| Condition / action | R8 | R9 | R10 | R11 | R12 | R13 |
+|---|---|---|---|---|---|---|
+| Sender / level | Class teacher / class | Class teacher / class | Teacher / school | School admin / school | School admin / school | Admin decides a rejection / school |
+| Time inside window | Y | N | – | Y | N | – |
+| Admin decision | – | – | Not yet | – | – | Rejected |
+| **Publish now** | X | | | X | | |
+| **Queue for 07:00** | | X | | | X | |
+| **Send to admin approval** | | | X | | | |
+| **Not published (returned to sender)** | | | | | | X |
 
-Where a school-level notice is approved outside the window, it follows rule 2 and is queued.
+Where a school-level notice is approved outside the window, it follows rule 5 and is queued.
 
 ### 3.6 MoSCoW priorities
 
@@ -233,20 +236,20 @@ Online fee payment (no payment risk and no payment-provider dependency), video c
 
 ## 4 Traceability matrix
 
-Every FR maps to one system test case (TC-01 to TC-10), plus related BVA, EP and decision-table tests. The NFRs map to the measure named in section 3.3. Full test steps are in `06_Test_Plan_and_Evidence.md`.
+Every FR maps to one system test case (TC-01 to TC-10), plus related BVA, equivalence-class (EC) and decision-table tests. The NFRs map to the measure named in section 3.3. Full test steps are in `06_Test_Plan_and_Evidence.md`.
 
 ### 4.1 Functional requirements
 
 | Requirement | System test | Related tests |
 |---|---|---|
-| FR-01 Accounts and roles | TC-01 | TC-EP-* (sender class) ; NFR-03 access tests |
-| FR-02 Notices | TC-02 | TC-DT-* (notice approval N1–N4) |
+| FR-01 Accounts and roles | TC-01 | TC-EC-05, TC-EC-06 (sender role); NFR-03 access tests |
+| FR-02 Notices | TC-02 | TC-DT-R8 to TC-DT-R13; TC-EC-10, TC-EC-11 |
 | FR-03 Read receipts | TC-03 | NFR-02 receipt timing |
 | FR-04 Homework | TC-04 | |
 | FR-05 Attendance alerts | TC-05 | NFR-01 attendance timing |
 | FR-06 Fee reminders | TC-06 | |
-| FR-07 Two-way messaging | TC-07 | TC-EP-* (parent vs. teacher sender) |
-| FR-08 Messaging-hours rule | TC-08 | TC-BVA-01 to TC-BVA-09; TC-DT-* (messaging rules R1–R7); TC-EP-* |
+| FR-07 Two-way messaging | TC-07 | TC-EC-05, TC-EC-06; TC-BVA-10 to TC-BVA-18 |
+| FR-08 Messaging-hours rule | TC-08 | TC-BVA-01 to TC-BVA-18; TC-DT-R1 to TC-DT-R7; TC-EC-01 to TC-EC-09 |
 | FR-09 Admin panel | TC-09 | |
 | FR-10 Record and reports | TC-10 | after-8 p.m. report checked against TC-BVA-* runs |
 

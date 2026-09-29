@@ -2,7 +2,7 @@
 
 These models cover the requirements in [the SRS](01_SRS_and_Priorities.md) (FR-01 to FR-10, NFR-01 to NFR-06). They are logical design views, not implementation claims. All diagrams use the same terms: parent, teacher, school admin, principal, notice, message, messaging window, approval request, event, dispatcher and audit entry. The package holds a use-case diagram, a class diagram, a sequence diagram, an activity diagram and a message state diagram. Section 7 checks that they agree with one another.
 
-**Rule set used throughout (SRS FR-08).** All times are IST, at minute granularity. The teacher sending window is 07:00-19:59 inclusive. A routine teacher message outside the window is queued for 07:00 the next school day. An urgent teacher message outside the window needs principal approval; approved means sent now, while rejected or no decision by 07:00 means sent at 07:00. Parents may send at any time; the teacher sees the message at 07:00 and the parent gets an instant auto-reply. A class-level notice by the class teacher publishes immediately (inside the window), and a school-level notice always needs school-admin approval.
+**Rule set used throughout (SRS FR-08).** All times are IST, at minute granularity. The teacher sending window is 07:00-19:59 inclusive. A routine teacher message outside the window is queued for next school day 07:00. An urgent teacher message outside the window needs principal approval; approved means sent now, while rejected or no decision by 07:00 means sent at 07:00. Parents may send at any time; the teacher sees the message at 07:00 and the parent gets an instant auto-reply. A class-level notice by the class teacher publishes immediately (inside the window), and a school-level notice always needs school-admin approval.
 
 ## 1. Use-case model
 
@@ -344,12 +344,11 @@ sequenceDiagram
   NS->>NS: validate (recipients, size, scope rights)
   alt scope = SCHOOL
     NS->>SA: create ApprovalRequest
-    alt approved
-      SA-->>NS: approve(request)
-    else rejected
+    break admin rejects
       SA-->>NS: reject(request, reason)
-      NS-->>TA: status REJECTED
+      NS-->>TA: status REJECTED (nothing is published)
     end
+    SA-->>NS: approve(request)
   else scope = CLASS by class teacher
     NS->>NS: no approval needed
   end
@@ -394,7 +393,7 @@ flowchart TD
   Submit --> Hours{"Time between 07:00 and 19:59?"}
   Hours -- "Yes" --> Send[Send message now]
   Hours -- "No (20:00-06:59)" --> Urgent{"Marked urgent?"}
-  Urgent -- "No, routine" --> Queue["Queue for 07:00 next school day, show 'Queued for 07:00'"]
+  Urgent -- "No, routine" --> Queue["Queue for next school day 07:00, show 'Queued for 07:00'"]
   Urgent -- "Yes" --> Req[Request principal approval]
   Req --> Dec{"Principal decision by 07:00?"}
   Dec -- "Approved" --> Send
@@ -416,7 +415,7 @@ The teacher-to-parent branch is on the left, the parent-to-teacher branch on the
 ```mermaid
 stateDiagram-v2
   [*] --> Draft
-  Draft --> Submitted : teacher taps Send
+  Draft --> Submitted : sender taps Send
   Submitted --> Sent : in window (07:00-19:59)
   Submitted --> Queued : routine, outside window
   Queued --> Sent : 07:00 release
@@ -427,6 +426,7 @@ stateDiagram-v2
   Delivered --> Read : parent opens
   Sent --> Failed : push error
   Failed --> Sent : retry (attempts <= 3)
+  Failed --> [*] : 3 retries exhausted
   Read --> [*]
 
   [*] --> ReceivedAfterHours : parent sends outside window
@@ -436,7 +436,7 @@ stateDiagram-v2
   DeliveredToTeacher --> [*]
 ```
 
-A parent message sent inside the window skips the right-hand branch and follows the same Sent, Delivered, Read path as a teacher message. A Failed message that exhausts three retries stays Failed and is listed for the school admin (a terminal state at the report level, with the audit entry retained).
+A parent message sent inside the window skips the right-hand branch and follows the same Sent, Delivered, Read path as a teacher message. A Failed message that exhausts three retries ends there (Failed to the end state), is listed for the school admin, and keeps its audit entry.
 
 ## 6. Cohesion and coupling
 
@@ -459,7 +459,7 @@ Each module has one reason to change: a new window time changes only Policy/Hour
 
 ### 6.2 How messaging and notices stay loosely coupled
 
-Notices and Messaging are the two biggest features, and they change for different reasons: notices follow school administration, messaging follows the hours rule. So neither module knows the other exists. NoticeService publishes a `NoticePublished` event and MessagingService publishes a `MessageReady` event. Both are consumed by one shared NotificationDispatcher, which owns fan-out, retries and the PushGateway adapter. The two services share only the Policy/Hours module, which is a pure function of role, time and urgency; it is reused, not duplicated, so the notice queue and the message queue always obey the same 07:00-19:59 window and cannot drift apart.
+Notices and Messaging are the two biggest features, and they change for different reasons: notices follow school administration, messaging follows the hours rule. So neither module knows the other exists. NoticeService publishes a `NoticePublished` event and MessagingService publishes a `MessageReady` event. Both are consumed by one shared NotificationDispatcher, which owns fan-out, retries and the PushGateway adapter. Neither service calls or references the other. They share only stable, passive elements: the Policy/Hours rules, the ApprovalRequest record and the audit writer. Policy/Hours is a pure function of role, time and urgency; `MessagingPolicy` is the shared sending-window policy used by both notices and messages. It is reused, not duplicated, so the notice queue and the message queue always obey the same 07:00-19:59 window and cannot drift apart.
 
 Consequences. First, a change to the messaging rule (for example a different end time) is made once in MessagingPolicy and applies to both. Second, a defect in messaging cannot break notice publishing, and either can be tested with a stub dispatcher. Third, delivery reliability (NFR-01, NFR-02) is tested once, at the dispatcher, using idempotency keys. Fourth, the price is indirection: an event bus and asynchronous delivery make tracing harder, so the Audit module records every event with an id. The coupling type is data coupling through events, the weakest useful form.
 
@@ -480,7 +480,7 @@ The crossed link between NoticeService and MessagingService marks the absence of
 
 ### 7.1 Sequence diagram elements against the class diagram
 
-| Sequence participant | Class in section 2 | Result |
+| Participant or message object | Class in section 2 | Result |
 |---|---|---|
 | Teacher (actor) | Teacher | Present |
 | TeacherApp / ParentApp | UI clients (no domain class; call the services only) | Boundary, not modelled |

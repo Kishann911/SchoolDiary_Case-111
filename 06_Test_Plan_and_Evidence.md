@@ -50,7 +50,7 @@ All times are IST at minute granularity (hh:mm). The rules under test come from 
 **1.6 Entry criteria**
 - Feature freeze reached (milestone M2, day 18): all features built.
 - The build is deployed to the test environment, with the synthetic roster of 2 schools loaded.
-- The messaging-hours rules (§5 of the facts, restated in §5 here) are agreed as the test oracle.
+- The messaging-hours rules (SRS section 3.5, restated in §5 here) are agreed as the test oracle.
 
 **1.7 Exit criteria**
 - 100% of planned cases executed.
@@ -88,7 +88,7 @@ One case per functional requirement, matching the traceability matrix in the SRS
 | TC-05 | FR-05 | 1. Mark student S absent at roll call (time t). 2. Record when the parent receives the alert. 3. Mark a present student. | The parent of S gets the alert within 15 min of t. No alert is sent for the present student. |
 | TC-06 | FR-06 | 1. Load a fee due date of D from the school fee records. 2. Advance the test clock to D − 7 days and D − 1 day. 3. Look for any payment option in the app. | One reminder is sent at D − 7 days and one at D − 1 day. There is no payment function anywhere in the app. |
 | TC-07 | FR-07 | 1. As a parent, open the thread for child X with the class teacher. 2. Send a message at 10:30. 3. The teacher replies at 10:40. | A single thread per student holds both messages. Both parties see them. Phone numbers are masked (NFR-04). |
-| TC-08 | FR-08 | Execute TC-BVA-01 to TC-BVA-18 (§4) and TC-DT-R1 to TC-DT-R12 (§5). | Each result matches the expected outcome in those tables: allowed, queued for 07:00, approval requested, or hold with auto-reply. |
+| TC-08 | FR-08 | Execute TC-BVA-01 to TC-BVA-18 (§4) and TC-DT-R1 to TC-DT-R13 (§5). | Each result matches the expected outcome in those tables: allowed, queued for 07:00, approval requested, or hold with auto-reply. |
 | TC-09 | FR-09 | 1. In the admin panel, bulk-import a CSV of 100 students with 1 bad row. 2. Map a teacher to two classes. 3. Open the approval queue. | 99 rows are imported and the bad row is reported with its line number. The mapping is saved and the teacher sees both classes. The queue lists pending school-level notices and urgent-message requests. |
 | TC-10 | FR-10 | 1. Send a set of notices and messages. 2. Search the audit log by sender, date and keyword. 3. Run the monthly-active-parents report and the teacher after-8 p.m. report. | The log finds every item sent. The reports show monthly active parents against the 90% target and teacher messages after 20:00 (target 0), with approved urgent ones listed separately. |
 
@@ -116,7 +116,7 @@ One case per functional requirement, matching the traceability matrix in the SRS
 |---|---|---|---|
 | TC-EC-01 | Teacher, routine, 13:30 | Send now | TC-DT-R1 |
 | TC-EC-02 | Teacher, routine, 03:15 | Queue for 07:00 | TC-DT-R2 |
-| TC-EC-03 | Teacher, routine, 21:45 | Queue for next-day 07:00 | TC-DT-R2 |
+| TC-EC-03 | Teacher, routine, 21:45 | Queue for next school day 07:00 | TC-DT-R2 |
 | TC-EC-04 | Teacher, routine, 25:10 | Rejected as invalid time | input validation |
 | TC-EC-05 | Parent, 13:30 | Delivered to the teacher | TC-DT-R6 |
 | TC-EC-06 | Parent, 21:45 | Auto-reply, held until 07:00 | TC-DT-R7 |
@@ -137,17 +137,17 @@ Boundaries: 07:00 (start) and 19:59 (last minute) of the window, plus the midnig
 | TC-BVA-03 | Teacher (routine) | 07:01 | Allowed, sent now |
 | TC-BVA-04 | Teacher (routine) | 19:58 | Allowed, sent now |
 | TC-BVA-05 | Teacher (routine) | 19:59 | Allowed, sent now |
-| TC-BVA-06 | Teacher (routine) | 20:00 | Queued for next-day 07:00 |
-| TC-BVA-07 | Teacher (routine) | 20:01 | Queued for next-day 07:00 |
-| TC-BVA-08 | Teacher (routine) | 23:59 | Queued for next-day 07:00 (day D + 1) |
-| TC-BVA-09 | Teacher (routine) | 00:00 (across midnight, day D + 1) | Queued for the same 07:00 of day D + 1. Exactly one queue entry, no duplicate against TC-BVA-08. |
+| TC-BVA-06 | Teacher (routine) | 20:00 | Queued for next school day 07:00 |
+| TC-BVA-07 | Teacher (routine) | 20:01 | Queued for next school day 07:00 |
+| TC-BVA-08 | Teacher (routine) | 23:59 | Queued for next school day 07:00 (day D + 1) |
+| TC-BVA-09 | Teacher (routine) | 00:00 (across midnight, day D + 1) | Queued for the same 07:00 of day D + 1. Exactly one queue entry, no duplicate against TC-BVA-08. The planned case ran on a reset clock and missed the live rollover; see lesson 4 in 08. |
 | TC-BVA-10 | Parent | 06:59 | Held and shown to the teacher at 07:00. Parent gets the instant auto-reply. |
 | TC-BVA-11 | Parent | 07:00 | Allowed, delivered to the teacher at once, no auto-reply |
 | TC-BVA-12 | Parent | 07:01 | Allowed, delivered to the teacher at once |
 | TC-BVA-13 | Parent | 19:58 | Allowed, delivered to the teacher at once |
 | TC-BVA-14 | Parent | 19:59 | Allowed, delivered to the teacher at once |
-| TC-BVA-15 | Parent | 20:00 | Held until 07:00 next day. Auto-reply sent instantly. |
-| TC-BVA-16 | Parent | 20:01 | Held until 07:00 next day. Auto-reply sent instantly. |
+| TC-BVA-15 | Parent | 20:00 | Held until next school day 07:00. Auto-reply sent instantly. |
+| TC-BVA-16 | Parent | 20:01 | Held until next school day 07:00. Auto-reply sent instantly. |
 | TC-BVA-17 | Parent | 23:59 | Held until 07:00 of day D + 1. Auto-reply sent instantly. |
 | TC-BVA-18 | Parent | 00:00 (day D + 1) | Held until the same 07:00 of day D + 1, once only. Auto-reply sent instantly. |
 
@@ -162,7 +162,7 @@ TC-BVA-08 and TC-BVA-09 together check the midnight rollover: both must resolve 
 - C2 Inside window (07:00–19:59)
 - C3 Urgent (teacher message outside the window)
 - C4 Principal approved
-- C5 Notice scope: Cl = class-level notice, Sc = school-level notice, – = an ordinary message (not a notice)
+- C5 Item: Msg = ordinary message, Cl = class-level notice, Sc = school-level notice
 - C6 Decision final (rejected, or 07:00 reached with no decision). This helper condition separates a pending request (R3) from a closed one (R5).
 
 **Actions**
@@ -172,21 +172,23 @@ TC-BVA-08 and TC-BVA-09 together check the midnight rollover: both must resolve 
 - A4 Auto-reply to parent and hold
 - A5 Publish now
 - A6 Send to admin approval
+- A7 Not published (returned to sender)
 
 | Rule | C1 Role | C2 In window | C3 Urgent | C4 Principal approved | C5 Scope | C6 Decision final | Action |
 |---|---|---|---|---|---|---|---|
-| R1 | T | Y | – | – | – | – | A1 Send now |
-| R2 | T | N | N | – | – | – | A2 Queue for 07:00 |
-| R3 | T | N | Y | N | – | N | A3 Request approval |
-| R4 | T | N | Y | Y | – | – | A1 Send now (immediately) |
-| R5 | T | N | Y | N | – | Y | A2 Queue for 07:00 (sent at 07:00) |
-| R6 | P | Y | – | – | – | – | A1 Send now (delivered to the teacher) |
-| R7 | P | N | – | – | – | – | A4 Auto-reply and hold until 07:00 |
+| R1 | T | Y | – | – | Msg | – | A1 Send now |
+| R2 | T | N | N | – | Msg | – | A2 Queue for 07:00 |
+| R3 | T | N | Y | N | Msg | N | A3 Request approval |
+| R4 | T | N | Y | Y | Msg | – | A1 Send now (immediately) |
+| R5 | T | N | Y | N | Msg | Y | A2 Queue for 07:00 (sent at 07:00) |
+| R6 | P | Y | – | – | Msg | – | A1 Send now (delivered to the teacher) |
+| R7 | P | N | – | – | Msg | – | A4 Auto-reply and hold until 07:00 |
 | R8 | T | Y | – | – | Cl | – | A5 Publish now |
 | R9 | T | N | – | – | Cl | – | A2 Queue for 07:00 |
 | R10 | T | – | – | – | Sc | – | A6 Send to admin approval |
 | R11 | A | Y | – | – | Sc | – | A5 Publish now |
 | R12 | A | N | – | – | Sc | – | A2 Queue for 07:00 |
+| R13 | A | – | – | – | Sc | – | A7 Not published; returned to sender with reason |
 
 Notes on the table:
 - Once an admin approves a teacher's school-level notice (R10), the window check applies in the same way as R11 and R12: published now inside the window, otherwise queued for 07:00. This is an assumption made so that a school-level notice cannot bypass the sending window.
@@ -197,19 +199,20 @@ Notes on the table:
 | ID | Rule | Input | Expected |
 |---|---|---|---|
 | TC-DT-R1 | R1 | Teacher sends a routine message at 10:30 | Sent now |
-| TC-DT-R2 | R2 | Teacher sends a routine message at 21:15 | Queued for next-day 07:00. Teacher sees "Queued for 07:00". |
+| TC-DT-R2 | R2 | Teacher sends a routine message at 21:15 | Queued for next school day 07:00. Teacher sees "Queued for 07:00". |
 | TC-DT-R3 | R3 | Teacher sends an urgent message at 21:15 with no decision yet | Approval request goes to the principal. Nothing is delivered yet. |
 | TC-DT-R4 | R4 | Same as R3, the principal approves at 21:20 | Sent immediately at 21:20. Counted in the separate urgent-approved report. |
 | TC-DT-R5 | R5 | Same as R3, the principal rejects (or no decision by 07:00) | Sent at 07:00. The 21:20 delivery must not happen. |
 | TC-DT-R6 | R6 | Parent messages at 10:30 | Delivered to the teacher at once |
 | TC-DT-R7 | R7 | Parent messages at 22:05 | Instant auto-reply. Message held and shown to the teacher at 07:00. |
 | TC-DT-R8 | R8 | Class teacher posts a class notice at 10:30 | Published now |
-| TC-DT-R9 | R9 | Class teacher posts a class notice at 21:15 | Queued for next-day 07:00 |
+| TC-DT-R9 | R9 | Class teacher posts a class notice at 21:15 | Queued for next school day 07:00 |
 | TC-DT-R10 | R10 | Teacher submits a school-level notice at 10:30 | Goes to school-admin approval. Not visible to parents. |
 | TC-DT-R11 | R11 | School admin posts a school-level notice at 10:30 | Published now |
-| TC-DT-R12 | R12 | School admin posts a school-level notice at 21:15 | Queued for next-day 07:00 |
+| TC-DT-R12 | R12 | School admin posts a school-level notice at 21:15 | Queued for next school day 07:00 |
+| TC-DT-R13 | R13 | School admin rejects a teacher's school-level notice | Status REJECTED; never visible to parents |
 
-**Completeness note.** The three roles are covered for both values of C2. For the teacher outside the window, both urgent values are covered (R2 for routine, R3–R5 for urgent), and for urgent messages the approval outcomes are pending (R3), approved (R4) and rejected or no decision by 07:00 (R5). Inside the window an urgent flag has no effect, so it is collapsed into R1. The parent has no urgency or approval condition, so two rules (R6, R7) cover the role. For notices, class-level and school-level scope are each covered, for a teacher in and out of the window (R8, R9, R10) and for an admin (R11, R12). The remaining combinations are impossible or out of the rules: a parent sending a notice, an admin sending a class-level notice, and admin direct messages, none of which the requirements allow. The rules are mutually exclusive and consistent with the messaging-hours rules of FR-08. Invalid times are rejected before the table is used (EC-T4).
+**Completeness note.** The three roles are covered for both values of C2. For the teacher outside the window, both urgent values are covered (R2 for routine, R3–R5 for urgent), and for urgent messages the approval outcomes are pending (R3), approved (R4) and rejected or no decision by 07:00 (R5). Inside the window an urgent flag has no effect, so it is collapsed into R1. The parent has no urgency or approval condition, so two rules (R6, R7) cover the role. For notices, class-level and school-level scope are each covered, for a teacher in and out of the window (R8, R9, R10), for an admin (R11, R12) and for an admin rejection (R13). The remaining combinations are impossible or out of the rules: a parent sending a notice, an admin sending a class-level notice, and admin direct messages, none of which the requirements allow. The rules are mutually exclusive and consistent with the messaging-hours rules of FR-08. Invalid times are rejected before the table is used (EC-T4).
 
 ## 6. Test log (Simulated for the case study)
 
@@ -223,7 +226,7 @@ Notes on the table:
 | UAT | 15 | 3 | 12 | 80.0% |
 | **Total** | **175** | **27** | **148** | **84.6%** |
 
-Each failed case is counted as one defect. The 40 system cases include TC-01 to TC-10 plus the BVA, EC and decision-table cases of §3–§5.
+Each failed case is counted as one defect. The 40 system cases are TC-01 to TC-10 plus 30 end-to-end scenario cases. The BVA, EC and decision-table cases (18 + 11 + 13 = 42) run at unit level against the rule engine, inside the 90 unit cases.
 
 ### 6.2 Defects by phase
 
@@ -259,7 +262,7 @@ Each failed case is counted as one defect. The 40 system cases include TC-01 to 
 | DEF-02 | Requirements review | High | Messaging | The rule for urgent messages did not say what happens when the principal gives no decision. Clarified: sent at 07:00. | Review | Fixed (spec) |
 | DEF-06 | Design review | Medium | Notices | Read-receipt record had no unique key per parent per notice, allowing double counts. | Review | Fixed |
 | DEF-11 | Unit | Low | Messaging | Auto-reply text missing the final full stop. | Unit test | Fixed |
-| DEF-15 | Unit | High | Messaging | The window check used `< 20:00` on minutes as text, so 19:59 was treated as outside the window. Caught by TC-BVA-05. | Unit test (BVA) | Fixed |
+| DEF-15 | Unit | High | Messaging | The window check used `t <= 19:58` (off-by-one), so 19:59 was treated as outside the window. Caught by TC-BVA-05. | Unit test (BVA) | Fixed |
 | DEF-21 | Integration | Critical | Admin | The teacher–class mapping was not applied to the message service, so a teacher could open another class's thread. | Integration test | Fixed |
 | DEF-24 | Integration | Medium | Attendance | The absence alert was queued twice when roll call was re-saved, creating a duplicate push. | Integration test | Fixed |
 | DEF-28 | System | High | Messaging | An urgent message rejected by the principal was still sent immediately at 21:20 as if approved (R5); it should wait until 07:00. Caught by TC-DT-R5. | System test | Fixed |
@@ -283,7 +286,7 @@ DEF-36 (post-release, medium) was a display error in the read-percentage figure 
 
 The module sizes are assumptions made for the case study. The 36 defects are counted against the modules in which the fault was found, including review defects.
 
-## 7. Calculations
+## 7. Calculations (Simulated for the case study)
 
 **7.1 Defect removal efficiency (DRE)**
 

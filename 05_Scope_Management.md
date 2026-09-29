@@ -44,11 +44,11 @@ flowchart LR
 4. **Baseline update:** the plan, the Estimation Sheet, the SRS and the test cases are updated and re-issued with a new version number. Only then does the team work on the change.
 5. **Communicate:** the decision and new dates go to the team and both pilot schools.
 
-## 4. Scope-creep examples that were rejected
+## 4. Scope-creep examples that were rejected (Simulated for the case study)
 
 | # | Request (raised by) | Impact analysis | Decision |
 |---|---|---|---|
-| 1 | Online fee payment in the app (school accounts staff) | Payment gateway, refunds and security tests; touches D and G on the critical chain, more than 5 pd; not one of FR-01–FR-10 | Rejected: out of scope; reminders only |
+| 1 | Online fee payment in the app (school accounts staff) | Payment gateway, refunds and security tests; touches D (float 3 d) and the critical Testing task G, adding more than 5 pd; not one of FR-01–FR-10 | Rejected: out of scope; reminders only |
 | 2 | Let parents message any teacher at any hour and have it shown immediately (parent group) | Breaks the 07:00–19:59 rule and the zero after-8 p.m. target; parents may already send anytime and receive an auto-reply | Rejected: conflicts with the objective; auto-reply keeps parents informed |
 | 3 | WhatsApp group bridge for teachers (a teacher) | Bypasses time limits and the audit log; API approval delay | Rejected: out of scope |
 | 4 | Hindi and Marathi screens before the pilot (a school head) | Translation and layout testing added to the critical chain | Deferred: C-01 in later release |

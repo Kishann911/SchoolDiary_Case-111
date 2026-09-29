@@ -120,7 +120,7 @@ gantt
   E Messaging (P3, 12d)           :e, 2026-01-05, 12d
   D Fee reminders (P3, 5d)        :d, after e, 5d
   section 2 Verify
-  G Testing (P1, P2, P3, 4d)      :crit, g, after b, 4d
+  G Testing (P1, P2, P3, 4d)      :crit, g, after b c d e, 4d
   section 3 Deploy and train
   H Training (P2, 5d)             :crit, h, after g, 5d
   section Milestones
