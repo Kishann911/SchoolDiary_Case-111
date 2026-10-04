@@ -275,7 +275,8 @@ class MessagingService:
         recipient: User,
         body: str,
         urgent: bool = False,
-        simulated_time: Optional[time] = None
+        simulated_time: Optional[time] = None,
+        trigger_teacher_reply: bool = True
     ) -> Tuple[Message, str, Optional[str]]:
         """
         Dispatch message enforcing the 07:00-19:59 window and urgency exceptions.
@@ -308,6 +309,28 @@ class MessagingService:
                 delivered_at=delivered_at
             )
             dispatcher.dispatch_message(message, recipient)
+
+            # If sent by parent during operational hours, simulate contextual teacher reply
+            if sender.role == Role.PARENT and recipient.role == Role.TEACHER and trigger_teacher_reply:
+                reply_text = MessagingService._generate_teacher_reply(body, sender.name)
+                t_msg_id = f"MSG-{uuid.uuid4().hex[:6].upper()}"
+                t_reply = Message(
+                    message_id=t_msg_id,
+                    conversation_id=conversation_id,
+                    sender_id=recipient.user_id,
+                    sender_name=recipient.name,
+                    sender_role=Role.TEACHER,
+                    recipient_id=sender.user_id,
+                    recipient_name=sender.name,
+                    body=reply_text,
+                    urgent=False,
+                    status=MessageStatus.READ,
+                    created_at=now + timedelta(seconds=1),
+                    delivered_at=now + timedelta(seconds=2),
+                    read_at=now + timedelta(seconds=3)
+                )
+                db.messages.append(t_reply)
+                dispatcher.dispatch_message(t_reply, sender)
 
         elif decision == PolicyDecision.QUEUE_FOR_0700:
             status = MessageStatus.QUEUED
@@ -389,6 +412,27 @@ class MessagingService:
         ))
 
         return message, info_text, auto_reply
+
+    @staticmethod
+    def _generate_teacher_reply(parent_message: str, parent_name: str) -> str:
+        """Generate an intelligent, contextual teacher response during school hours."""
+        text = parent_message.lower()
+        first_name = parent_name.split()[0] if parent_name else "Parent"
+
+        if any(k in text for k in ["homework", "assignment", "exercise", "copy", "solution", "book", "fractions", "maths", "science", "page"]):
+            return f"Thank you for the update, {first_name} ji. I will verify Aarav's notebook and homework exercises in class today."
+        elif any(k in text for k in ["fever", "sick", "doctor", "health", "leave", "absent", "ill", "unwell", "cough", "cold", "medicine"]):
+            return f"Understood. Health is paramount—please ensure Aarav rests well. I will share any missed classroom topics once he resumes."
+        elif any(k in text for k in ["bus", "van", "transport", "pickup", "drop", "late", "reach", "timing", "stop", "route"]):
+            return "The school transport supervisor confirmed the bus schedule is running on time. In case of route delays, the office desk will alert you."
+        elif any(k in text for k in ["fee", "fees", "challan", "dues", "payment", "counter"]):
+            return "For fee receipts or queries, please connect with the school accounts counter between 09:00 AM and 01:00 PM on working days."
+        elif any(k in text for k in ["marks", "grade", "score", "exam", "test", "assessment", "quiz", "unit"]):
+            return f"The assessment answer sheets are being reviewed and marks will be reflected on the SchoolDiary portal by Friday."
+        elif any(k in text for k in ["hello", "hi", "good morning", "good afternoon", "namaste", "pranam"]):
+            return f"Good day, {first_name} ji! Hope Aarav is having a productive week. How may I assist you today?"
+        else:
+            return f"Thank you for your message, {first_name} ji. I have noted this and will follow up with Aarav during school hours today."
 
     @staticmethod
     def adjudicate_urgent_message(request_id: str, principal: User, approved: bool, reason: str = "") -> Tuple[bool, str]:
