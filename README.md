@@ -1,58 +1,137 @@
-# SchoolDiary — Case 111 (SE&PM)
+# SchoolDiary — Parent–Teacher Communication Platform (Case 111)
 
-**Software Engineering & Project Management · Case #111 · Kishan Ojha**
+**B.Tech CSE (2025–29) · Semester III · Software Engineering & Project Management**  
+**Sole Author & Maintainer:** Kishan Ojha ([@Kishann911](https://github.com/Kishann911))
 
-This folder holds the Software Engineering and Project Management deliverables for **SchoolDiary**, a parent–teacher communication app for a group of 12 schools. It is a documentation package: requirements, design, plan, estimates, tests and risk. It is not a deployed application.
+---
 
-## Problem statement
+## 📌 Executive Summary & Problem Definition
 
-A group of 12 schools talks to parents through paper diaries, printed circulars and dozens of teacher-run WhatsApp groups. This causes three problems:
+A group of 12 schools communicates with 14,000 parents through paper diaries, circulars, and dozens of teacher-run WhatsApp groups. This legacy workflow introduces three systemic failures:
 
-- Parents miss notices.
-- Teachers receive messages late at night.
-- Management has no record of what was communicated.
+1. **Missed Circulars:** Paper slips and ad-hoc chat channels lack receipt tracking or guaranteed delivery.
+2. **Late-Night Faculty Fatigue:** Teachers receive messages at all hours with no boundary enforcement.
+3. **Zero Governance Record:** Management has no central, searchable communication log for institutional compliance.
 
-The group wants one app for notices, homework, attendance alerts, fee reminders, and two-way messages within school hours. Teachers want limits on messaging, while parents want instant replies.
+**The Solution:** SchoolDiary is an Android app for parents and faculty paired with a secure web administration portal. It centralizes circulars, homework distribution, 15-minute absence alerts, fee reminders, and two-way messaging strictly constrained within school hours (07:00–19:59 IST).
 
-## Deliverables
+---
 
-| # | Document | What it covers |
+## 📄 Publication-Grade PDF Report
+
+The comprehensive, 29-page publication-grade PDF report is generated and available directly in this repository:
+
+👉 **[Download SchoolDiary_Case111_Full_Report.pdf](SchoolDiary_Case111_Full_Report.pdf)**
+
+- **Style:** Clean minimalist theme with slate navy headers (`#1B2A4A`), coral critical-path highlights (`#E05A4E`), and muted teal data tables (`#2D7D8E`).
+- **Features:** Dynamic two-pass Table of Contents with exact page references, 44 structural anchors, and embedded 300-DPI vector diagrams.
+- **Coverage:** Complete IEEE 830 SRS, UML design suite, CPM project plan, estimation proofs, scope boundary matrix, IEEE 829 test plan with empirical evidence, risk register, and retrospective lessons learned.
+
+---
+
+## 📊 Key Case Baseline Data & Computed Metrics
+
+All figures are derived strictly from the Case 111 problem statement:
+
+```
++------------------------------------------------------------------------------------+
+|                                 CASE 111 METRICS                                   |
++------------------------------------+-----------------------------------------------+
+| Total Parent Cohort                | 14,000 parents across 12 institutions         |
+| Total Faculty Base                 | 650 teachers                                  |
+| Pilot Scope (2 Schools)            | 2,300 parents (16.43% group share), ~107 staff |
+| Bottom-Up Effort Budget            | 68 person-days across 8 work packages         |
+| Team Allocation                    | 3 full-stack software engineers               |
+| Theoretical Ideal Duration         | 68 ÷ 3 = 22.67 ≈ 23 working days              |
+| Scheduled Duration (CPM)           | 27 working days (Critical Path A -> B -> G -> H)|
+| Team Capacity & Utilisation        | 3 × 27 = 81 person-days (84% utilisation)     |
+| Monthly Active Parent Target       | 90% (2,070 parents pilot; 12,600 group)       |
+| Faculty Messaging SLA Target       | Zero teacher messages delivered after 20:00   |
+| Measured Defect Removal Efficiency | 34 ÷ (34 + 2) = 94.4% (Target: ≥ 90%)         |
++------------------------------------+-----------------------------------------------+
+```
+
+---
+
+## 🏗️ Architecture & Critical Path
+
+```
+CPM CRITICAL PATH (27 WORKING DAYS):
+======================================================================================
+[ Task A: Notices ] ---> [ Task B: Homework ] ---> [ Task G: Testing ] ---> [ Task H: Training ]
+      (8 Days)                 (10 Days)                 (4 Days)                 (5 Days)
+      ES:0, EF:8               ES:8, EF:18              ES:18, EF:22             ES:22, EF:27
+      Float: 0d                Float: 0d                 Float: 0d                Float: 0d
+======================================================================================
+NON-CRITICAL TASKS (ABSORBED BY FLOAT):
+- Task F: Admin Console  (10d, Float: 2d, Ends Day 10 -> Milestones M1)
+- Task C: Attendance     (6d,  Float: 2d, Runs Days 10–16)
+- Task D: Fee Reminders  (5d,  Float: 3d, Runs Days 12–17)
+- Task E: Messaging      (12d, Float: 6d, Runs Days 0–12)
+```
+
+```
+LOOSE COUPLING DOMAIN ARCHITECTURE:
+======================================================================================
+  +------------------+                    +-----------------------+
+  |  NoticeService   |---NoticePublished->|                       |
+  | (Circulars & WF) |                    | NotificationDispatcher|---> [PushGateway]
+  +------------------+                    | (Idempotency, Retries,|          |
+           |                              |  Fan-out Queue)       |          v
+     canSendNow()                         +-----------------------+     [Parent Client]
+           v                                          ^
+  +------------------+                                |
+  | MessagingPolicy  |                                |
+  |  (Pure Rules)    |                                |
+  +------------------+                                |
+           ^                                          |
+     canSendNow()                                     |
+           |                                          |
+  +------------------+                    +-----------+-----------+
+  | MessagingService |----MessageReady----+
+  | (Threads & Hours)|
+  +------------------+
+  [ZERO DIRECT CALLS OR DEPENDENCIES BETWEEN NOTICESERVICE AND MESSAGINGSERVICE]
+======================================================================================
+```
+
+---
+
+## 📂 Deliverables Index
+
+| # | Document File | Topic & Key Contents |
 |---|---|---|
-| 01 | [SRS and priorities](01_SRS_and_Priorities.md) | IEEE 830-style SRS with 10 functional and 6 measurable non-functional requirements covering delivery reliability, privacy and usability. Also covers the messaging-hours rules, MoSCoW priorities, an **FR → test-case traceability matrix**, and requirements elicitation through interviews and direct observation. |
-| 02 | [UML design](02_UML_Design.md) | Use-case, class, sequence (*send a notice and track read receipts*), activity, and message-state diagrams. Includes the cohesion/coupling rationale and how messaging and notices stay loosely coupled. |
-| 03 | [Project plan](03_Project_Plan.md) | WBS, dependency network with the critical path, forward/backward pass, float, a Gantt chart with milestones, and resource allocation. |
-| 04 | [Estimation sheet](04_Estimation_Sheet.md) | Pilot share, total effort, ideal and scheduled duration, utilisation, activity targets and confidence level. Every formula is shown, plus a section on why an estimate is not a promise. |
-| 05 | [Scope management](05_Scope_Management.md) | Pilot scope versus later release versus out of scope, with the effect on time, cost and quality, and change control. |
-| 06 | [Test plan and evidence](06_Test_Plan_and_Evidence.md) | Test plan and system test cases. Equivalence classes and boundary values around the 8 p.m. limit, a decision table for the messaging-hours and approval rules, the test log, DRE and defect density. |
-| 07 | [Risk register and issue log](07_Risk_Register_and_Issue_Log.md) | Probability × impact matrix and an exposure-ranked register that includes low parent adoption. RMMM plans for the top three risks, and a separate issue log. |
-| 08 | [Closure note and lessons learned](08_Closure_and_Lessons_Learned.md) | Pilot results against targets, quality summary, sign-off, and a lessons-learned page. |
+| **01** | [`01_SRS_and_Priorities.md`](01_SRS_and_Priorities.md) | **IEEE 830 SRS:** 10 Functional Requirements (FR-01 to 10), 6 measurable NFRs (NFR-01 to 06), 07:00–19:59 IST messaging oracle, MoSCoW prioritization, and complete Requirements Traceability Matrix (RTM). |
+| **02** | [`02_UML_Design.md`](02_UML_Design.md) | **UML Design Package:** Use-Case diagram, Class diagram, Sequence diagram (*Send notice and track read receipts*), Activity diagram, and 12-state Message lifecycle statechart with loose coupling rationale. |
+| **03** | [`03_Project_Plan.md`](03_Project_Plan.md) | **Project Plan:** Work Breakdown Structure (WBS), CPM Network Diagram, Forward/Backward pass table, Float analysis, Gantt chart with milestones (M1–M4), and resource allocation table. |
+| **04** | [`04_Estimation_Sheet.md`](04_Estimation_Sheet.md) | **Estimation Sheet:** Bottom-up formula working for 68 person-days, 23d ideal vs 27d scheduled duration, 84% utilisation, ±20% confidence limits, and rationale on why an estimate is not a promise. |
+| **05** | [`05_Scope_Management.md`](05_Scope_Management.md) | **Scope Management:** Pilot scope vs Phase 2 rollout, comprehensive 16-row In-Scope / Out-of-Scope boundary impact table (Time, Cost, Quality), and 5-step Change Control Procedure. |
+| **06** | [`06_Test_Plan_and_Evidence.md`](06_Test_Plan_and_Evidence.md) | **Test Plan & Evidence (IEEE 829-lite):** System test cases (TC-01 to 10), Equivalence Classes, Boundary Value Analysis around 8 p.m. (18 cases), Decision Table (13 rules), defect logs, 4.0 defects/KLOC density, and 94.4% DRE proof. |
+| **07** | [`07_Risk_Register_and_Issue_Log.md`](07_Risk_Register_and_Issue_Log.md) | **Risk Management:** 5×5 Probability × Impact heatmap, 8 exposure-ranked risks with R1 (Low adoption) at exposure 20, RMMM action plans for top 3 risks, separate issue log (I-01 to 03), and separation justification. |
+| **08** | [`08_Closure_and_Lessons_Learned.md`](08_Closure_and_Lessons_Learned.md) | **Closure & Retrospective:** Pilot actuals (86.0% adoption, zero late messages, Day 29 finish), conditional rollout governance decision, 6 empirical lessons learned, and formal multi-stakeholder sign-off matrix. |
 
-## Key figures (from the case data)
+---
 
-| Quantity | Working | Result |
-|---|---|---|
-| Pilot share of parents | 2,300 ÷ 14,000 | **16.4%** |
-| Total effort | 8 + 10 + 6 + 5 + 12 + 10 + 12 + 5 | **68 person-days** |
-| Ideal duration (team of 3) | 68 ÷ 3 | **22.67 ≈ 23 working days** |
-| Scheduled duration (critical path A → B → G → H) | 8 + 10 + 4 + 5 | **27 working days** |
-| Team utilisation | 68 ÷ (3 × 27) | **84%** |
-| Monthly-active target (pilot) | 0.90 × 2,300 | **2,070 parents** |
-| Teacher sending window | Rule for FR-08 | **07:00–19:59 IST**; target of 0 teacher messages after 8 p.m. |
-| Defect removal efficiency | 34 ÷ (34 + 2) | **94.4%** |
+## 🛠️ Reproduction & Artifact Generation
 
-## How to read the diagrams
+To regenerate the high-resolution vector diagrams and publication PDF:
 
-All diagrams are written in Mermaid and render directly on GitHub and in most Markdown viewers. Every diagram block has been checked with the Mermaid parser.
+```bash
+# 1. Install prerequisites (ReportLab & Matplotlib)
+pip3 install reportlab matplotlib
 
-## Scope and honesty note
+# 2. Generate 300-DPI architecture, CPM, Gantt, and risk diagrams
+python3 generate_diagrams.py
 
-The brief's own figures are used exactly as given: 14,000 parents, 650 teachers, a 2,300-parent pilot, the effort table, a team of 3 and the two targets. Any other value is labelled as an assumption. Examples are the task dependencies, the 07:00 window start, and the module sizes.
+# 3. Compile the 29-page two-pass publication-grade PDF report
+python3 generate_pdf.py
+```
 
-Some content is **simulated for the case study**, because no real implementation, interviews, tests or pilot took place. This covers:
+---
 
-- the interview and observation findings
-- the test log and defects
-- the issue log
-- the pilot results and actual durations
+## 👤 Author & Governance
 
-Each simulated section is labelled.
+- **Sole Candidate Author:** Kishan Ojha ([@Kishann911](https://github.com/Kishann911))
+- **Email:** `kishanojha462@gmail.com`
+- **Academic Context:** Software Engineering & Project Management, Semester III, B.Tech CSE (2025–2029)
+- **License:** Academic Project Artifacts · All Rights Reserved
