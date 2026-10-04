@@ -112,18 +112,49 @@ LOOSE COUPLING DOMAIN ARCHITECTURE:
 
 ---
 
+## 💻 Live Interactive Working Product (`app.py`)
+
+SchoolDiary features a fully functional, end-to-end interactive application built using Streamlit that implements all 10 Functional Requirements (FR-01 to FR-10):
+
+```bash
+# 1. Install dependencies
+pip3 install -r requirements.txt
+
+# 2. Launch the live interactive application
+streamlit run app.py
+```
+
+### Key Interactive Features:
+1. **Interactive Clock Simulator Toolbar:** Toggle between Real Time and Mock Clock (Hour/Minute slider) to test the 07:00–19:59 IST window, 20:00 cutoff, midnight rollover, and instant auto-reply behavior live!
+2. **Multi-Role Scoped Portals:**
+   - 👨‍👩‍👧 **Parent Portal (Meena Kulkarni):** Notice board with read receipt recording, homework viewer with "Acknowledge" button, 15-minute absence alert tray, fee reminders (without payment button), and isolated two-way teacher chat with instant auto-reply simulation.
+   - 👩‍🏫 **Teacher Portal (Rahul Deshmukh):** Classroom roll-call with 15-minute absence alert dispatch, class & school circular composer, live read receipts analytics (% read and unread parent list with "Remind Unread" button), homework publisher, and parent threads with urgency overrides.
+   - 🏫 **School Admin Portal (Sunita Rao):** School notice approval queue (Approve / Reject), and bulk CSV roster import with row-by-row syntax validation and error reporter.
+   - 🎓 **Principal Portal (Dr. Anil Menon):** Emergency out-of-hours message approval queue (Rule R3/R4/R5).
+   - 📊 **Management & Audit Portal (Group Director):** Real-time compliance KPI gauges (Monthly Active Parents vs 90% target, Late Messages vs 0 target), and searchable communication audit log.
+
+---
+
+## 🧪 Automated Test Suite (41 Passing Tests)
+
+The repository includes a comprehensive regression test suite verifying all 18 BVA cases, all 13 Decision Table rules, and system acceptance tests TC-01 to TC-10:
+
+```bash
+# Run all 41 unit, integration, and system acceptance tests
+python3 -m unittest discover tests
+```
+
+---
+
 ## 🛠️ Reproduction & Artifact Generation
 
 To regenerate the high-resolution vector diagrams and publication PDF:
 
 ```bash
-# 1. Install prerequisites (ReportLab & Matplotlib)
-pip3 install reportlab matplotlib
-
-# 2. Generate 300-DPI architecture, CPM, Gantt, and risk diagrams
+# 1. Generate 300-DPI architecture, CPM, Gantt, and risk diagrams
 python3 generate_diagrams.py
 
-# 3. Compile the 29-page two-pass publication-grade PDF report
+# 2. Compile the 29-page two-pass publication-grade PDF report
 python3 generate_pdf.py
 ```
 
