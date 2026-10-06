@@ -1,168 +1,248 @@
-# SchoolDiary — Parent–Teacher Communication Platform (Case 111)
+<div align="center">
 
-**B.Tech CSE (2025–29) · Semester III · Software Engineering & Project Management**  
-**Sole Author & Maintainer:** Kishan Ojha ([@Kishann911](https://github.com/Kishann911))
+# 🏫 SchoolDiary
+### *Enterprise Parent–Teacher Communication Platform for School Networks*
+**Case Study #111 · Software Engineering & Project Management (SE&PM)**  
+**B.Tech Computer Science & Engineering (2025–2029) · Semester III**
 
----
+[![Build Status](https://img.shields.io/badge/tests-41%2F41%20passing-success?style=for-the-badge&logo=pytest&logoColor=white)](tests/)
+[![Report](https://img.shields.io/badge/PDF%20Report-29%20Pages%20Publication%20Grade-1B2A4A?style=for-the-badge&logo=adobeacrobatreader&logoColor=white)](SchoolDiary_Case111_Full_Report.pdf)
+[![Specification](https://img.shields.io/badge/IEEE-830%20SRS%20Compliant-E05A4E?style=for-the-badge)](01_SRS_and_Priorities.md)
+[![DRE](https://img.shields.io/badge/Quality-94.4%25%20DRE-2D7D8E?style=for-the-badge)](06_Test_Plan_and_Evidence.md)
+[![Live UI](https://img.shields.io/badge/App-Streamlit%20Interactive-FF4B4B?style=for-the-badge&logo=streamlit&logoColor=white)](app.py)
 
-## 📌 Executive Summary & Problem Definition
+<br/>
 
-A group of 12 schools communicates with 14,000 parents through paper diaries, circulars, and dozens of teacher-run WhatsApp groups. This legacy workflow introduces three systemic failures:
-
-1. **Missed Circulars:** Paper slips and ad-hoc chat channels lack receipt tracking or guaranteed delivery.
-2. **Late-Night Faculty Fatigue:** Teachers receive messages at all hours with no boundary enforcement.
-3. **Zero Governance Record:** Management has no central, searchable communication log for institutional compliance.
-
-**The Solution:** SchoolDiary is an Android app for parents and faculty paired with a secure web administration portal. It centralizes circulars, homework distribution, 15-minute absence alerts, fee reminders, and two-way messaging strictly constrained within school hours (07:00–19:59 IST).
-
----
-
-## 📄 Publication-Grade PDF Report
-
-The comprehensive, 29-page publication-grade PDF report is generated and available directly in this repository:
-
-👉 **[Download SchoolDiary_Case111_Full_Report.pdf](SchoolDiary_Case111_Full_Report.pdf)**
-
-- **Style:** Clean minimalist theme with slate navy headers (`#1B2A4A`), coral critical-path highlights (`#E05A4E`), and muted teal data tables (`#2D7D8E`).
-- **Features:** Dynamic two-pass Table of Contents with exact page references, 44 structural anchors, and embedded 300-DPI vector diagrams.
-- **Coverage:** Complete IEEE 830 SRS, UML design suite, CPM project plan, estimation proofs, scope boundary matrix, IEEE 829 test plan with empirical evidence, risk register, and retrospective lessons learned.
+**[📄 Read PDF Report](SchoolDiary_Case111_Full_Report.pdf)** • **[🎯 Viva & Defense Guide](VIVA_AND_PRESENTATION_GUIDE.md)** • **[🚀 Run Web App](#-interactive-working-product-apppy)** • **[🧪 Run Test Suite](#-automated-testing--verification)** • **[📂 Deliverables Index](#-deliverables-index)**
 
 ---
 
-## 📊 Key Case Baseline Data & Computed Metrics
+</div>
 
-All figures are derived strictly from the Case 111 problem statement:
+## 📌 Executive Overview & Problem Context
+
+A consortium of **12 schools** communicating with **14,000 parents** and **650 teachers** faced three systemic breakdowns across legacy paper diaries and unmonitored WhatsApp groups:
 
 ```
-+------------------------------------------------------------------------------------+
-|                                 CASE 111 METRICS                                   |
-+------------------------------------+-----------------------------------------------+
-| Total Parent Cohort                | 14,000 parents across 12 institutions         |
-| Total Faculty Base                 | 650 teachers                                  |
-| Pilot Scope (2 Schools)            | 2,300 parents (16.43% group share), ~107 staff |
-| Bottom-Up Effort Budget            | 68 person-days across 8 work packages         |
-| Team Allocation                    | 3 full-stack software engineers               |
-| Theoretical Ideal Duration         | 68 ÷ 3 = 22.67 ≈ 23 working days              |
-| Scheduled Duration (CPM)           | 27 working days (Critical Path A -> B -> G -> H)|
-| Team Capacity & Utilisation        | 3 × 27 = 81 person-days (84% utilisation)     |
-| Monthly Active Parent Target       | 90% (2,070 parents pilot; 12,600 group)       |
-| Faculty Messaging SLA Target       | Zero teacher messages delivered after 20:00   |
-| Measured Defect Removal Efficiency | 34 ÷ (34 + 2) = 94.4% (Target: ≥ 90%)         |
-+------------------------------------+-----------------------------------------------+
+┌─────────────────────────────────────────────────────────────────────────────────────────────────┐
+│                                   THE 3 SYSTEMIC BREAKDOWNS                                     │
+├───────────────────────────────┬─────────────────────────────────┬───────────────────────────────┤
+│    1. The Paper Disaster      │     2. The WhatsApp Chaos       │   3. The Management Blindspot │
+│  Circulars and paper diaries  │ Personal phone numbers exposed. │ No centralized legal audit    │
+│  get lost or torn in school   │ Intrusive messages at 11:00 PM  │ trail of what was sent, when  │
+│  bags. Parents miss notices.  │ cause severe teacher fatigue.   │ it was read, or attendance.   │
+└───────────────────────────────┴─────────────────────────────────┴───────────────────────────────┘
 ```
+
+**The Engineered Solution:**  
+**SchoolDiary** centralizes communication across an Android mobile application and web administration portal. It enforces tamper-evident **digital circulars with read receipts**, **15-minute emergency absence alerts**, **read-only fee reminders** (zero payment fraud liability), and an automated **07:00–19:59 IST messaging oracle** reducing after-hours teacher messages to **zero**.
 
 ---
 
-## 🏗️ Architecture & Critical Path
+## 📊 Project Baseline Data & Mathematical Derivations
 
-```
-CPM CRITICAL PATH (27 WORKING DAYS):
-======================================================================================
-[ Task A: Notices ] ---> [ Task B: Homework ] ---> [ Task G: Testing ] ---> [ Task H: Training ]
-      (8 Days)                 (10 Days)                 (4 Days)                 (5 Days)
-      ES:0, EF:8               ES:8, EF:18              ES:18, EF:22             ES:22, EF:27
-      Float: 0d                Float: 0d                 Float: 0d                Float: 0d
-======================================================================================
-NON-CRITICAL TASKS (ABSORBED BY FLOAT):
-- Task F: Admin Console  (10d, Float: 2d, Ends Day 10 -> Milestones M1)
-- Task C: Attendance     (6d,  Float: 2d, Runs Days 10–16)
-- Task D: Fee Reminders  (5d,  Float: 3d, Runs Days 12–17)
-- Task E: Messaging      (12d, Float: 6d, Runs Days 0–12)
-```
+All metrics are derived strictly from the case brief and calculated via formal engineering equations:
 
-```
-LOOSE COUPLING DOMAIN ARCHITECTURE:
-======================================================================================
-  +------------------+                    +-----------------------+
-  |  NoticeService   |---NoticePublished->|                       |
-  | (Circulars & WF) |                    | NotificationDispatcher|---> [PushGateway]
-  +------------------+                    | (Idempotency, Retries,|          |
-           |                              |  Fan-out Queue)       |          v
-     canSendNow()                         +-----------------------+     [Parent Client]
-           v                                          ^
-  +------------------+                                |
-  | MessagingPolicy  |                                |
-  |  (Pure Rules)    |                                |
-  +------------------+                                |
-           ^                                          |
-     canSendNow()                                     |
-           |                                          |
-  +------------------+                    +-----------+-----------+
-  | MessagingService |----MessageReady----+
-  | (Threads & Hours)|
-  +------------------+
-  [ZERO DIRECT CALLS OR DEPENDENCIES BETWEEN NOTICESERVICE AND MESSAGINGSERVICE]
-======================================================================================
-```
+| Engineering Parameter | Exact Value | Formula / Mathematical Derivation |
+|---|:---:|---|
+| **Total Institutional Cohort** | `14,000 Parents` | Total parent base across all 12 institutions |
+| **Faculty Population** | `650 Teachers` | Total certified faculty members across the network |
+| **Pilot Institutional Scope** | `2 Schools` | St. Mary's High School & Delhi Public Academy |
+| **Pilot Parent Cohort** | `2,300 Parents` | Given pilot parent boundary |
+| **Pilot Share of Total Parents** | **`16.43%`** (≈ `16.4%`) | $\frac{2,300}{14,000} \times 100 = 16.42857\dots\%$ |
+| **Proportional Pilot Faculty** | **`~107 Teachers`** | $650 \times 16.42857\% = 106.78 \approx 107\text{ teachers}$ |
+| **Total Bottom-Up Effort** | **`68 Person-Days`** | Notices(8) + HW(10) + Att(6) + Fee(5) + Msg(12) + Admin(10) + QA(12) + Train(5) |
+| **Engineering Team Size** | `3 Developers` | Dev P1 (Lead Architect), Dev P2 (Frontend/Training), Dev P3 (Backend/QA) |
+| **Ideal Theoretical Duration** | **`23 Working Days`** | $\frac{68\text{ person-days}}{3\text{ devs}} = 22.67 \approx 23\text{ days}$ (assumes 100% unconstrained parallelism) |
+| **Scheduled CPM Duration** | **`27 Working Days`** | Critical Path: Task A (8d) $\rightarrow$ Task B (10d) $\rightarrow$ Task G (4d) $\rightarrow$ Task H (5d) |
+| **Capacity & Utilisation Rate** | **`83.95%`** (≈ `84%`) | Total capacity: $3 \times 27 = 81\text{ pd}$; Utilisation: $\frac{68}{81} \times 100 = 83.95\%$ |
+| **Schedule Precedence Stretch** | **`4 Working Days`** | $27\text{ scheduled days} - 23\text{ ideal days} = 4\text{ days}$ (Task dependencies & single trainer) |
+| **Monthly Active Parent Target**| `90%` | Pilot Target: $2,300 \times 90\% = \mathbf{2,070\text{ parents}}$; Group: $12,600\text{ parents}$ |
+| **Late Message Curfew SLA** | **`0 Messages`** | Routine faculty notifications delivered after 20:00 IST reduced to zero |
+| **Pre-Release Defects ($E$)** | `34 Defects` | Discovered across design reviews (7), unit (11), integration (7), system (6), UAT (3) |
+| **Post-Release Defects ($D$)** | `2 Defects` | Week 1 midnight queue bug (`DEF-35`) + Week 2 date rendering bug (`DEF-36`) |
+| **Defect Removal Efficiency (DRE)**| **`94.4%`** | $\text{DRE} = \frac{E}{E + D} = \frac{34}{34 + 2} = \frac{34}{36} = \mathbf{94.44\%}$ (Target: $\ge 90\%$) |
+| **System Defect Density** | **`4.00 / KLOC`** | $36\text{ total defects} \div 9.0\text{ KLOC total codebase}$ |
+| **Highest Density Subsystem** | **`5.45 / KLOC`** | Messaging Subsystem ($12\text{ defects} \div 2.2\text{ KLOC}$; 36% above system average) |
 
 ---
 
-## 📂 Deliverables Index
+## 🏛️ System Architecture & Visual Design Package
 
-| # | Document File | Topic & Key Contents |
+### 1. Decoupled Event-Driven Domain Architecture
+`NoticeService` and `MessagingService` have **zero direct method calls, zero shared interfaces, and zero cross-module database foreign keys**:
+
+<div align="center">
+  <img src="diagrams/architecture.png" alt="Clean Decoupled Architecture" width="90%"/>
+  <p><i>Figure 1: Event-Driven Domain Architecture — Complete Decoupling via Shared NotificationDispatcher Bus.</i></p>
+</div>
+
+* **Asynchronous Integration:** `NoticeService` emits `NoticePublished`; `MessagingService` emits `MessageReady`. An independent `NotificationDispatcher` handles device push tokens, idempotency keys, and exponential retry backoffs.
+* **Pure Policy Engine:** Both modules query a stateless rules engine (`MessagingPolicy`) for 07:00–19:59 IST window evaluations.
+
+---
+
+### 2. Critical Path Method (CPM) & Project Schedule
+Why does a 68 person-day project with 3 engineers take **27 days** instead of **23 days**?
+
+<div align="center">
+  <img src="diagrams/cpm_network.png" alt="CPM Network Diagram" width="90%"/>
+  <p><i>Figure 2: Critical Path Network Diagram — Highlighting Critical Chain A(8d) → B(10d) → G(4d) → H(5d) = 27 Days.</i></p>
+</div>
+
+1. **Precedence Dependency ($A \rightarrow B$):** Task B (Homework, 10d) reuses notice distribution code from Task A (Notices, 8d), pushing completion to **Day 18**.
+2. **Feature Freeze Gate ($B \rightarrow G$):** Task G (System Testing, 12 person-days $\div$ 3 devs = 4 calendar days) requires all functional modules code-complete.
+3. **Single Trainer Constraint ($G \rightarrow H$):** Task H (School Training, 5 days across 2 campuses) is delivered in person by a single developer (P2) and cannot be divided.
+4. **Schedule Stretch:** The 4-day gap ($27 - 23$) reflects structural dependencies, achieving a safe, sustainable **84% team utilization**.
+
+<div align="center">
+  <img src="diagrams/gantt_chart.png" alt="Gantt Chart" width="90%"/>
+  <p><i>Figure 3: Project Schedule Gantt Chart with Resource Allocation & Milestones M1–M4.</i></p>
+</div>
+
+---
+
+### 3. Formal UML Design Models
+
+The system architecture is formally modeled using standard UML 2.5 diagrams in [`02_UML_Design.md`](02_UML_Design.md):
+
+<details>
+<summary><b>🔍 Click to Expand: UML Diagrams Gallery (Use Case, Class, Sequence, Activity, Statechart)</b></summary>
+<br/>
+
+#### A. UML Use Case Model
+<div align="center">
+  <img src="diagrams/uml_use_case.png" alt="UML Use Case Diagram" width="85%"/>
+  <p><i>Figure 4.1: UML Use Case Diagram — System Boundary, Actors, Include & Extend Relationships.</i></p>
+</div>
+
+#### B. Domain Class Diagram (With Loose Coupling Proof)
+<div align="center">
+  <img src="diagrams/uml_class_diagram.png" alt="UML Class Diagram" width="85%"/>
+  <p><i>Figure 4.2: Domain Class Diagram — Entities, Attributes, Methods, and Decoupled Dispatcher.</i></p>
+</div>
+
+#### C. Sequence Diagram: Send Notice & Track Read Receipts
+<div align="center">
+  <img src="diagrams/uml_sequence_notice.png" alt="UML Sequence Diagram" width="85%"/>
+  <p><i>Figure 4.3: UML Sequence Diagram — Notice Publishing, Admin Approval Frame, Time Check & Receipt Tracking.</i></p>
+</div>
+
+#### D. Activity Diagram: Teacher Sends a Message
+<div align="center">
+  <img src="diagrams/uml_activity_message.png" alt="UML Activity Diagram" width="70%"/>
+  <p><i>Figure 4.4: UML Activity Diagram — Time Window Decision, Routine Queueing, and Urgent Principal Override.</i></p>
+</div>
+
+#### E. Statechart Diagram: 12-State Message Lifecycle
+<div align="center">
+  <img src="diagrams/uml_state_message.png" alt="UML State Diagram" width="85%"/>
+  <p><i>Figure 4.5: UML Statechart — Message Finite State Machine Across Daytime and Overnight Pipelines.</i></p>
+</div>
+
+</details>
+
+---
+
+## ⏰ The 07:00–19:59 IST Messaging Rules Engine
+
+The core operational innovation is an automated rules engine governing communication hours:
+
+| Message Timing | Message Type | System Behavior & Lifecycle State |
 |---|---|---|
-| **01** | [`01_SRS_and_Priorities.md`](01_SRS_and_Priorities.md) | **IEEE 830 SRS:** 10 Functional Requirements (FR-01 to 10), 6 measurable NFRs (NFR-01 to 06), 07:00–19:59 IST messaging oracle, MoSCoW prioritization, and complete Requirements Traceability Matrix (RTM). |
-| **02** | [`02_UML_Design.md`](02_UML_Design.md) | **UML Design Package:** Use-Case diagram, Class diagram, Sequence diagram (*Send notice and track read receipts*), Activity diagram, and 12-state Message lifecycle statechart with loose coupling rationale. |
-| **03** | [`03_Project_Plan.md`](03_Project_Plan.md) | **Project Plan:** Work Breakdown Structure (WBS), CPM Network Diagram, Forward/Backward pass table, Float analysis, Gantt chart with milestones (M1–M4), and resource allocation table. |
-| **04** | [`04_Estimation_Sheet.md`](04_Estimation_Sheet.md) | **Estimation Sheet:** Bottom-up formula working for 68 person-days, 23d ideal vs 27d scheduled duration, 84% utilisation, ±20% confidence limits, and rationale on why an estimate is not a promise. |
-| **05** | [`05_Scope_Management.md`](05_Scope_Management.md) | **Scope Management:** Pilot scope vs Phase 2 rollout, comprehensive 16-row In-Scope / Out-of-Scope boundary impact table (Time, Cost, Quality), and 5-step Change Control Procedure. |
-| **06** | [`06_Test_Plan_and_Evidence.md`](06_Test_Plan_and_Evidence.md) | **Test Plan & Evidence (IEEE 829-lite):** System test cases (TC-01 to 10), Equivalence Classes, Boundary Value Analysis around 8 p.m. (18 cases), Decision Table (13 rules), defect logs, 4.0 defects/KLOC density, and 94.4% DRE proof. |
-| **07** | [`07_Risk_Register_and_Issue_Log.md`](07_Risk_Register_and_Issue_Log.md) | **Risk Management:** 5×5 Probability × Impact heatmap, 8 exposure-ranked risks with R1 (Low adoption) at exposure 20, RMMM action plans for top 3 risks, separate issue log (I-01 to 03), and separation justification. |
-| **08** | [`08_Closure_and_Lessons_Learned.md`](08_Closure_and_Lessons_Learned.md) | **Closure & Retrospective:** Pilot actuals (86.0% adoption, zero late messages, Day 29 finish), conditional rollout governance decision, 6 empirical lessons learned, and formal multi-stakeholder sign-off matrix. |
+| **07:00 – 19:59 IST** | Routine or Urgent | **Delivered immediately** (`SENT` $\rightarrow$ `DELIVERED`). |
+| **19:59 IST** | Last Valid Minute | **Delivered immediately** (*Boundary test `TC-BVA-05` caught defect `DEF-15`*). |
+| **20:00 – 06:59 IST** | Teacher Routine | **Blocked & Queued** for next school day 07:00 AM release (`QUEUED`). Zero buzz on parent device. |
+| **20:00 – 06:59 IST** | Teacher Urgent | Routes to **Principal Override Queue** (`PENDING_APPROVAL`). If approved $\rightarrow$ sent immediately; if rejected/timeout $\rightarrow$ queued for 07:00 AM. |
+| **24/7 (Any Time)** | Parent Message | Parent can submit 24/7. Overnight messages held as `HELD_FOR_TEACHER` with an **instant auto-reply**: *"Teachers reply between 07:00 and 20:00. Call office for emergencies."* Released to teacher inbox at 07:00 AM. |
 
 ---
 
-## 💻 Live Interactive Working Product (`app.py`)
+## 📂 Deliverables Index & Artifact Map
 
-SchoolDiary features a fully functional, end-to-end interactive application built using Streamlit that implements all 10 Functional Requirements (FR-01 to FR-10):
+This repository contains complete, publication-grade engineering artifacts covering every stage of the Software Development Life Cycle:
+
+| Deliverable ID | Document / Artifact | Scope & Key Contents |
+|:---:|---|---|
+| **01** | [`01_SRS_and_Priorities.md`](01_SRS_and_Priorities.md) | **IEEE 830 SRS:** 10 Functional Requirements (FR-01 to 10), 6 measurable NFRs, MoSCoW prioritization, and complete Requirements Traceability Matrix (RTM). |
+| **02** | [`02_UML_Design.md`](02_UML_Design.md) | **UML Design Package:** Use Case, Class, Sequence (*Send notice & read receipts*), Activity, and 12-state Message statechart with loose coupling justification. |
+| **03** | [`03_Project_Plan.md`](03_Project_Plan.md) | **Project Plan:** WBS, CPM Network Diagram, Forward/Backward pass table, Float analysis, Gantt chart, milestones M1–M4, and resource allocation. |
+| **04** | [`04_Estimation_Sheet.md`](04_Estimation_Sheet.md) | **Estimation Sheet:** Bottom-up formula working for 68 person-days, 23d ideal vs 27d scheduled duration, 84% utilisation, and "Estimate vs Promise" treatise. |
+| **05** | [`05_Scope_Management.md`](05_Scope_Management.md) | **Scope Management:** Pilot scope vs Phase 2 rollout, 16-row In/Out-of-Scope boundary impact table (Time, Cost, Quality), and 5-step Change Control Procedure. |
+| **06** | [`06_Test_Plan_and_Evidence.md`](06_Test_Plan_and_Evidence.md) | **Test Plan & Evidence:** System acceptance tests (TC-01 to 10), 18 Boundary Value tests, 13 Decision Table rules, defect log, 4.0/KLOC density, and 94.4% DRE proof. |
+| **07** | [`07_Risk_Register_and_Issue_Log.md`](07_Risk_Register_and_Issue_Log.md) | **Risk Management:** 5×5 Probability-Impact heatmap, 8 exposure-ranked risks, RMMM plans for top 3 risks, and separate Issue Log (I-01 to I-03). |
+| **08** | [`08_Closure_and_Lessons_Learned.md`](08_Closure_and_Lessons_Learned.md) | **Closure & Retrospective:** Pilot actuals (86.0% adoption, 0 late messages), conditional rollout decision with SMS fallback, and 6 lessons learned. |
+| **VIVA** | [`VIVA_AND_PRESENTATION_GUIDE.md`](VIVA_AND_PRESENTATION_GUIDE.md) | **Viva Defense Guide:** 60-second elevator pitch, numerical cheat sheet, top 15 examiner questions with knockout model answers. |
+| **REPORT**| [`SchoolDiary_Case111_Full_Report.pdf`](SchoolDiary_Case111_Full_Report.pdf) | **29-Page PDF Report:** Formal executive document with two-pass dynamic Table of Contents and embedded 300-DPI vector diagrams. |
+
+---
+
+## 💻 Interactive Working Product (`app.py`)
+
+The project includes an end-to-end, runnable web application built with **Streamlit** implementing all 10 Functional Requirements (FR-01 to FR-10) with clean brutalist styling:
 
 ```bash
 # 1. Install dependencies
 pip3 install -r requirements.txt
 
-# 2. Launch the live interactive application
+# 2. Launch the interactive application
 streamlit run app.py
 ```
 
-### Key Interactive Features:
-1. **Interactive Clock Simulator Toolbar:** Toggle between Real Time and Mock Clock (Hour/Minute slider) to test the 07:00–19:59 IST window, 20:00 cutoff, midnight rollover, and instant auto-reply behavior live!
-2. **Multi-Role Scoped Portals:**
-   - 👨‍👩‍👧 **Parent Portal (Meena Kulkarni):** Notice board with read receipt recording, homework viewer with "Acknowledge" button, 15-minute absence alert tray, fee reminders (without payment button), and isolated two-way teacher chat with instant auto-reply simulation.
-   - 👩‍🏫 **Teacher Portal (Rahul Deshmukh):** Classroom roll-call with 15-minute absence alert dispatch, class & school circular composer, live read receipts analytics (% read and unread parent list with "Remind Unread" button), homework publisher, and parent threads with urgency overrides.
+*Live Local URL:* **`http://localhost:8502`**
+
+### Key Application Features:
+1. **Interactive Clock Simulator Toolbar:** Toggle between Real Time and Mock Clock (Hour/Minute slider) to test 07:00, 19:59, 20:00, 23:59, and midnight rollover live!
+2. **5 Scoped Role Portals:**
+   - 👨‍👩‍👧 **Parent Portal (Meena Kulkarni):** Notice board with read receipt capture, homework viewer with "Acknowledge" button, 15-minute absence alert tray, fee reminders (without payment button), and isolated two-way teacher chat with **contextual teacher auto-replies**.
+   - 👩‍🏫 **Teacher Portal (Rahul Deshmukh):** Morning roll call with 15-minute absence dispatch, notice composer, live read receipts analytics, and parent threads with urgency overrides.
    - 🏫 **School Admin Portal (Sunita Rao):** School notice approval queue (Approve / Reject), and bulk CSV roster import with row-by-row syntax validation and error reporter.
-   - 🎓 **Principal Portal (Dr. Anil Menon):** Emergency out-of-hours message approval queue (Rule R3/R4/R5).
-   - 📊 **Management & Audit Portal (Group Director):** Real-time compliance KPI gauges (Monthly Active Parents vs 90% target, Late Messages vs 0 target), and searchable communication audit log.
+   - 🎓 **Principal Portal (Dr. Anil Menon):** Emergency out-of-hours message override queue (Rules R3/R4/R5).
+   - 📊 **Management & Audit Portal (Group Director):** Real-time compliance gauges (Monthly Active Parents vs 90% target, Late Messages vs 0 target), and searchable communication audit log.
 
 ---
 
-## 🧪 Automated Test Suite (41 Passing Tests)
+## 🧪 Automated Testing & Verification
 
-The repository includes a comprehensive regression test suite verifying all 18 BVA cases, all 13 Decision Table rules, and system acceptance tests TC-01 to TC-10:
+The system is validated by an automated unit and integration test suite in Python:
 
 ```bash
-# Run all 41 unit, integration, and system acceptance tests
+# Run all 41 test cases (BVA, Decision Tables, and Acceptance Tests)
 python3 -m unittest discover tests
 ```
 
+```
+.........................................
+----------------------------------------------------------------------
+Ran 41 tests in 0.003s
+
+OK
+```
+
+* **Boundary Coverage:** Evaluates all 18 BVA cases (`TC-BVA-01` to `18`), catching off-by-one (`DEF-15`) and midnight rollover (`DEF-35`).
+* **Rule Engine Coverage:** Asserts all 13 Decision Table permutations (`TC-DT-R1` to `R13`).
+* **Acceptance Coverage:** Executes all 10 System Acceptance Tests (`TC-01` to `TC-10`).
+
 ---
 
-## 🛠️ Reproduction & Artifact Generation
+## 🛠️ Artifact Regeneration
 
-To regenerate the high-resolution vector diagrams and publication PDF:
+To regenerate all diagrams or compile the 29-page PDF report:
 
 ```bash
-# 1. Generate 300-DPI architecture, CPM, Gantt, and risk diagrams
+# Generate all 10 high-resolution 300-DPI vector diagrams
 python3 generate_diagrams.py
 
-# 2. Compile the 29-page two-pass publication-grade PDF report
+# Compile the 29-page publication-grade PDF report
 python3 generate_pdf.py
 ```
 
 ---
 
-## 👤 Author & Governance
+## 👤 Author & Academic Integrity
 
-- **Sole Candidate Author:** Kishan Ojha ([@Kishann911](https://github.com/Kishann911))
-- **Email:** `kishanojha462@gmail.com`
-- **Academic Context:** Software Engineering & Project Management, Semester III, B.Tech CSE (2025–2029)
-- **License:** Academic Project Artifacts · All Rights Reserved
+* **Sole Candidate Author:** **Kishan Ojha** ([@Kishann911](https://github.com/Kishann911))
+* **Email:** `kishanojha462@gmail.com`
+* **Academic Institution:** B.Tech Computer Science & Engineering (2025–2029), Semester III
+* **Course:** Software Engineering & Project Management (SE&PM)
+* **All Rights Reserved · Academic Capstone Repository**
