@@ -329,4 +329,16 @@ if __name__ == '__main__':
     make_architecture()
     make_risk_matrix()
     make_defect_chart()
-    print("All diagrams generated successfully!")
+
+    print("Generating UML diagrams...")
+    from generate_uml_diagrams import (
+        make_use_case_diagram, make_class_diagram, make_sequence_diagram,
+        make_activity_diagram, make_state_diagram
+    )
+    make_use_case_diagram()
+    make_class_diagram()
+    make_sequence_diagram()
+    make_activity_diagram()
+    make_state_diagram()
+
+    print("All 10 project and UML diagrams generated successfully!")

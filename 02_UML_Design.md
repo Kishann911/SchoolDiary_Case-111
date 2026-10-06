@@ -75,6 +75,9 @@ flowchart LR
   UCReports -. "«include»" .-> UCLogin
 ```
 
+![UML Use Case Diagram](diagrams/uml_use_case.png)
+*Figure 1.1: Use-Case Diagram — System Boundary, Primary & Secondary Actors, «include» and «extend» Relationships.*
+
 Notes: Send message includes Check messaging hours because every teacher message passes the rule. Send urgent message after hours extends Send message only when the message is outside the window and marked urgent; the base use case is complete without it. Publish school notice includes Admin approval because a school-level notice can never skip approval (FR-02). Remind unread parents extends Track read receipts only when the unread list is not empty. Send fee reminder is triggered by the school admin's fee records; no payment use case exists (out of scope).
 
 ## 2. Class model
@@ -316,6 +319,9 @@ classDiagram
   SchoolAdmin ..> ApprovalRequest : decides
 ```
 
+![UML Class Diagram](diagrams/uml_class_diagram.png)
+*Figure 2.1: Domain Class Diagram — Core Entities, Relationships, and Event-Driven Decoupling.*
+
 Design notes:
 - Homework, attendance and fee reminders also publish events to the same dispatcher (same pattern as NoticePublished). They are omitted from the diagram to keep it readable.
 - `MessagingPolicy.canSendNow(role, time, urgent)` returns one of ALLOW, QUEUE_FOR_0700 or NEEDS_PRINCIPAL_APPROVAL. For a parent it always returns ALLOW.
@@ -383,6 +389,9 @@ sequenceDiagram
   end
 ```
 
+![UML Sequence Diagram](diagrams/uml_sequence_notice.png)
+*Figure 3.1: Sequence Diagram — Send Notice and Track Read Receipts (Approval, Time Check, Push, & Receipts).*
+
 Every class or component in the diagram exists in section 2, except `TeacherApp` and `ParentApp` (clients) and the three human actors (Teacher, SchoolAdmin, Parent; these map to the classes Teacher, SchoolAdmin and Parent). See section 7.
 
 ## 4. Activity diagram: teacher sends a message
@@ -405,6 +414,9 @@ flowchart TD
   Push --> Audit[Write audit entry]
   Audit --> End([End])
 ```
+
+![UML Activity Diagram](diagrams/uml_activity_message.png)
+*Figure 4.1: Activity Diagram — Teacher Sends a Message (Time Window, Overnight Queue & Urgent Override).*
 
 This mirrors the rules exactly: 07:00-19:59 sends immediately; a routine message outside the window is queued; an urgent message outside the window goes to the principal, and approval sends now while rejection or silence means 07:00. Approved urgent messages are counted separately in the after-8 p.m. report.
 
@@ -435,6 +447,9 @@ stateDiagram-v2
   HeldForTeacher --> DeliveredToTeacher : 07:00
   DeliveredToTeacher --> [*]
 ```
+
+![UML Statechart Diagram](diagrams/uml_state_message.png)
+*Figure 5.1: State Diagram — Message Lifecycle Finite State Machine (12 States, Overnight Queue & Auto-Replies).*
 
 A parent message sent inside the window skips the right-hand branch and follows the same Sent, Delivered, Read path as a teacher message. A Failed message that exhausts three retries ends there (Failed to the end state), is listed for the school admin, and keeps its audit entry.
 
